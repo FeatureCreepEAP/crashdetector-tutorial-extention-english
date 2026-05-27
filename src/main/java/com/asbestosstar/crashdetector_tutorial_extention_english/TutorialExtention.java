@@ -98,9 +98,68 @@ public class TutorialExtention implements Extencion {
 
 	}
 
+	/**
+	 * Registers the language examples supplied by this extension.
+	 *
+	 * Important guidance:
+	 *
+	 * Normal CrashDetector extensions should usually avoid registering or
+	 * overriding languages. Language overrides are global for the current
+	 * CrashDetector process, so they do not combine cleanly when several different
+	 * extensions try to override the same language code.
+	 *
+	 * For example, if two extensions both register a replacement for "en", the last
+	 * one registered wins. Their overrides are not merged method-by-method.
+	 *
+	 * Because of that, language registration is usually better suited for:
+	 *
+	 * - modpack integration extensions - launcher/distribution integration
+	 * extensions - private packs with controlled extension sets - full translation
+	 * packs
+	 *
+	 * Small utility extensions should normally hard-code their own extension
+	 * strings or keep their text inside their own GUI/check classes instead of
+	 * replacing a shared CrashDetector language.
+	 */
 	private void registerLanguages() {
+		/*
+		 * This registers an English override.
+		 *
+		 * EnglishTutorialOverride extends the built-in Ingles class and still returns
+		 * "en" from codigo().
+		 *
+		 * Because CrashDetector stores languages by language code, registering another
+		 * language with code "en" replaces the existing English language object.
+		 *
+		 * This is useful for a controlled modpack integration, but ordinary extensions
+		 * should be careful with it because it affects the whole CrashDetector UI.
+		 */
 		MonitorDePID.registrarIdioma(new EnglishTutorialOverride());
+
+		/*
+		 * This registers a new example language.
+		 *
+		 * PirateSpanishLanguage extends Espanol so it inherits most Spanish strings,
+		 * but it returns a new custom code such as "pirate" from codigo().
+		 *
+		 * Because the code is new, it does not replace Spanish. It becomes an
+		 * additional selectable language in the language dropdown.
+		 *
+		 * This is easier than writing a full language from scratch, but it is still
+		 * mostly appropriate for demonstration, testing, or controlled modpack
+		 * integration.
+		 */
 		MonitorDePID.registrarIdioma(new PirateSpanishLanguage());
+
+		/*
+		 * After registering or overriding languages, recalculate the active language.
+		 *
+		 * This matters if the current language was replaced, such as "en", or if the
+		 * user has already selected the new language code.
+		 *
+		 * Without this call, MonitorDePID.idioma may still point to the older language
+		 * object until the next normal recalculation.
+		 */
 		MonitorDePID.recalcularIdiomaDespuesDeExtensiones();
 	}
 

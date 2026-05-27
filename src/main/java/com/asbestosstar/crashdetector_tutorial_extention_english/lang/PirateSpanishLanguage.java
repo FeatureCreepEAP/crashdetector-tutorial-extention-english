@@ -30,7 +30,7 @@ public class PirateSpanishLanguage extends Espanol {
 		 * If another language is registered with the same code, the latest registered
 		 * language replaces the earlier one.
 		 */
-		return "pirate";
+		return "pi";
 	}
 
 	@Override
